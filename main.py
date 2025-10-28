@@ -20,7 +20,7 @@ def main():
     dataset = foz.load_zoo_dataset(
         "coco-2017",
         split="validation",
-        max_samples=1000, 
+        max_samples=50, 
         label_types=["detections"],
         shuffle=False
     )
@@ -52,6 +52,16 @@ def main():
     dataset.apply_model(model_retinanet_wrapper, label_field="retinanet")
 
     session.view = dataset.view()
+
+    # --- DEFINIÇÃO DAS CLASSES DE INTERESSE ---
+    classes_de_interesse = [
+        # classes dependentes do contexto:
+        "stop sign", "airplane", "skis", "tennis racket",
+
+        # classes independentes do contexto:
+        "person", "cat", "banana", "cup"
+    ]
+
 
     ### PLOT DO NÍVEL DE CONFIANÇA
     print("Gerando gráfico de confiança...")
@@ -162,14 +172,6 @@ def main():
     print("Extraindo dados de Precision/Recall/F1 para classes de interesse...")
     plot_metrics_data = [] 
 
-    classes_de_interesse = [
-        # classes dependentes do contexto:
-        "traffic light", "stop sign", "airplane", "skis", "tennis racket"
-
-        # classes independentes do contexto:
-        "person", "cat", "dog", "chair", "bicycle", "bird"
-    ]
-
     for model_field, results in evaluation_results.items():
         model_name = model_name_map.get(model_field, model_field)
         report_dict = results.report()
@@ -264,7 +266,7 @@ def main():
             kind="bar", col_wrap=4,
             height=3,
             aspect=1,
-            legend=False
+            legend=True
         )
         
         # 1. Título principal
@@ -276,12 +278,14 @@ def main():
         g.set(ylim=(0, 1.1)) 
         
         # 3. Adicionar legenda à direita, SEM o título "Modelo"
-        g.add_legend(
-            # title="Modelo", # REMOVIDO ou title=None
-            bbox_to_anchor=(1.02, 0.5), # Posição (X > 1 = direita, Y = 0.5 = centro vertical)
-            loc='center left'          # Alinhamento da legenda em relação ao ponto de ancoragem
-        )
-        
+        # g.add_legend(
+        #     title="Modelo", # REMOVIDO
+        #     bbox_to_anchor=(1.02, 0.5), # Posição (X > 1 = direita, Y = 0.5 = centro vertical)
+        #     loc='center left'          # Alinhamento da legenda em relação ao ponto de ancoragem
+        # )
+        g._legend.set_title("Modelo")
+
+
         # 4. Ajustar espaçamento geral
         #    right=0.88 ou 0.90 -> Deixa um pouco mais de espaço para a legenda (sem título ocupa menos)
         g.figure.subplots_adjust(top=0.90, hspace=0.45, wspace=0.15, right=0.88) 
