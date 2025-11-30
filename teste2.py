@@ -1,0 +1,2 @@
+import pytorch_grad_cam
+print(pytorch_grad_cam.__version__)
