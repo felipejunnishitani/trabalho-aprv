@@ -138,7 +138,7 @@ Caso ocorram erros relacionados a nomes de arquivos ou IDs de anotações, verif
 
 -----
 
-## ✒️ Autores
+## Autores
 
   * Anne Mari Suenaga Sakai
   * Felipe Jun Nishitani
