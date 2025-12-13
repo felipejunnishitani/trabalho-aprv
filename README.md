@@ -1,142 +1,163 @@
-Visão geral
+## 🤖 Avaliação e Interpretabilidade de Modelos de Detecção de Objetos
 
-O arquivo main.py implementa um pipeline completo para avaliação de modelos de detecção de objetos em diferentes variações de um mesmo conjunto de imagens. O script:
+Este repositório contém um pipeline completo implementado em `main.py` para avaliar o desempenho e a interpretabilidade visual de modelos pré-treinados de detecção de objetos em diferentes variações (original, neutro e atípico) de um mesmo conjunto de imagens.
 
-Prepara datasets no FiftyOne a partir de imagens locais e anotações no formato COCO;
+-----
 
-Aplica múltiplos modelos de detecção pré-treinados;
+## 🌟 Visão Geral
 
-Avalia o desempenho dos modelos (mAP, precisão, recall, F1-score e IoU);
+O script **`main.py`** orquestra uma série de etapas cruciais para a avaliação robusta de modelos, utilizando a poderosa biblioteca **FiftyOne** para gerenciamento de dados e visualização.
 
-Gera gráficos comparativos e relatórios textuais;
+### 🎯 Funcionalidades Principais
 
-Produz heatmaps de atenção (EigenCAM) para interpretação visual das detecções;
+  * 📂 **Criação e Gerenciamento de Datasets:** Prepara e gerencia automaticamente datasets no FiftyOne a partir de imagens locais e anotações no formato COCO.
+  * 🤖 **Avaliação Multimodelo:** Aplica e avalia múltiplos modelos de detecção pré-treinados (via FiftyOne Zoo).
+  * 📊 **Geração de Métricas e Gráficos:** Calcula métricas de desempenho essenciais ($\text{mAP}$, Precisão, Recall, $\text{F1-score}$, $\text{IoU}$) e gera gráficos comparativos.
+  * 🧠 **Interpretabilidade Visual (EigenCAM):** Produz mapas de calor (heatmaps) de atenção (via EigenCAM) para justificar visualmente as detecções e auxiliar na análise de falhas.
+  * 📝 **Relatórios Detalhados:** Gera relatórios textuais e estatísticos por dataset e modelo.
+  * 🖥️ **Visualização Interativa:** Abre a interface do FiftyOne App para inspeção visual e depuração dos resultados da avaliação.
 
-Abre a interface interativa do FiftyOne para inspeção dos resultados.
+-----
 
-Funcionalidades principais
+## ⚙️ Configuração do Projeto
 
-📂 Criação e gerenciamento automático de datasets no FiftyOne
+### 📂 Estrutura Esperada de Diretórios
 
-🤖 Avaliação de múltiplos modelos de detecção
+O script espera uma estrutura inicial de diretórios e cria automaticamente as pastas de saída.
 
-📊 Geração de gráficos estatísticos por dataset e modelo
-
-🧠 Interpretação visual com Grad-CAM / EigenCAM
-
-📝 Relatórios detalhados em texto
-
-🖥️ Visualização interativa via FiftyOne App
-
-Estrutura esperada de diretórios
+```
 project/
 │
 ├── main.py
-├── dataset_original/      # Imagens originais
-├── dataset_neutro/        # Imagens modificadas (neutro)
-├── dataset_atipico/       # Imagens modificadas (atípico)
+├── dataset_original/        # 🖼️ Imagens originais para o dataset base
+├── dataset_neutro/          # 🖼️ Imagens modificadas (variação 'neutro')
+├── dataset_atipico/         # 🖼️ Imagens modificadas (variação 'atípico')
 │
-├── grafico_original/      # Saídas do dataset original
-├── grafico_neutro/        # Saídas do dataset neutro
-├── grafico_atipico/       # Saídas do dataset atípico
+├── grafico_original/        # 📈 Saídas (gráficos, relatórios) do dataset original
+├── grafico_neutro/          # 📈 Saídas (gráficos, relatórios) do dataset neutro
+├── grafico_atipico/         # 📈 Saídas (gráficos, relatórios) do dataset atípico
 │
-├── heatmaps_COCO_Original/
-├── heatmaps_Neutro/
-├── heatmaps_Atipico/
-└── coco_annotations/      # Anotações COCO baixadas automaticamente
+├── heatmaps_COCO_Original/  # 🔥 Heatmaps gerados (EigenCAM)
+├── heatmaps_Neutro/         # 🔥 Heatmaps gerados (EigenCAM)
+├── heatmaps_Atipico/        # 🔥 Heatmaps gerados (EigenCAM)
+└── coco_annotations/        # 💾 Anotações COCO baixadas automaticamente
+```
 
-As pastas de saída são criadas automaticamente, caso não existam.
+### 🛠️ Ajustes de Configuração
 
-Configurações principais
+As variáveis no início do arquivo `main.py` podem ser ajustadas conforme a necessidade do seu experimento:
 
-No início do arquivo main.py, encontram-se variáveis que podem ser ajustadas conforme o experimento:
+> ```python
+> PASTA_ORIGINAL_LOCAL = "dataset_original"
+> ```
 
-PASTA_ORIGINAL_LOCAL = "dataset_original"
+> PASTAS\_IMAGENS = {
+> "Neutro": "dataset\_neutro",
+> "Atipico": "dataset\_atipico",
+> }
 
+> PASTAS\_SAIDA = {
+> "COCO\_Original": "grafico\_original",
+> "Neutro": "grafico\_neutro",
+> "Atipico": "grafico\_atipico",
+> }
 
-PASTAS_IMAGENS = {
-    "Neutro": "dataset_neutro",
-    "Atipico": "dataset_atipico",
-}
+> CLASSES\_DE\_INTERESSE = [
+> "stop sign", "airplane", "skis",
+> \# ... adicione ou remova classes conforme seu foco
+> ]
+>
+> ```
+> ```
 
+-----
 
-PASTAS_SAIDA = {
-    "COCO_Original": "grafico_original",
-    "Neutro": "grafico_neutro",
-    "Atipico": "grafico_atipico",
-}
+## 📥 Dependências
 
+Recomenda-se fortemente o uso de um ambiente virtual (ex: `venv` ou `conda`).
 
-CLASSES_DE_INTERESSE = [
-    "stop sign", "airplane", "skis",
-    "tennis racket", "person",
-    "cat", "banana", "cup"
-]
-Dependências
+### Instalação via pip
 
-Recomenda-se o uso de um ambiente virtual.
-
-Instalação via pip
+```bash
 pip install fiftyone torch torchvision matplotlib seaborn pandas numpy pillow requests pymongo pytorch-grad-cam
+```
 
-⚠️ Certifique-se de instalar uma versão do PyTorch compatível com sua GPU e CUDA, se aplicável.
+> ⚠️ **Importante:** Certifique-se de instalar uma versão do **PyTorch** (`torch` e `torchvision`) compatível com sua **GPU e CUDA**, caso deseje aproveitar a aceleração de hardware.
 
-Como executar
+-----
 
-Organize as imagens nas pastas dataset_original, dataset_neutro e dataset_atipico.
+## 🚀 Como Executar
 
-Execute o script:
+### 1\. Preparação
 
+Organize suas imagens nas respectivas pastas de entrada: `dataset_original`, `dataset_neutro` e `dataset_atipico`.
+
+### 2\. Execução
+
+Execute o script diretamente:
+
+```bash
 python main.py
+```
 
-Durante a execução:
+### Fluxo de Execução
 
-As anotações COCO serão baixadas automaticamente, se necessário;
+1.  As anotações COCO (para as classes de interesse) serão baixadas automaticamente, se necessário.
+2.  Os modelos de detecção serão carregados via FiftyOne Zoo.
+3.  As métricas de desempenho, gráficos e heatmaps serão gerados e salvos nas pastas de saída.
+4.  A interface do **FiftyOne App** será aberta ao final para exploração visual.
 
-Os modelos serão carregados via FiftyOne Zoo;
+-----
 
-As métricas, gráficos e heatmaps serão gerados;
+## 📈 Resultados Gerados
 
-A interface do FiftyOne será aberta ao final.
+Para cada dataset analisado, o script salva os seguintes arquivos na pasta de saída correspondente (ex: `grafico_original/`):
 
-Resultados gerados
+### 📄 Relatório Textual
 
-Para cada dataset analisado, o script gera:
+  * `relatorio_detalhado.txt`
 
-📄 relatorio_detalhado.txt
+### 📊 Gráficos (PNG)
 
-📊 Gráficos:
+  * `grafico_confianca.png`
+  * `grafico_iou_final.png`
+  * `grafico_ap_classes_selecionadas.png`
+  * `grafico_metricas_detalhadas.png`
 
-grafico_confianca.png
+### 🔥 Mapas de Calor (Heatmaps)
 
-grafico_iou_final.png
+Subpastas contendo imagens com os heatmaps de atenção (EigenCAM) aplicados, organizadas por nome do modelo.
 
-grafico_ap_classes_selecionadas.png
+-----
 
-grafico_metricas_detalhadas.png
+## 📝 Observações
 
-🔥 Heatmaps salvos em subpastas organizadas por modelo
+### Desempenho
 
-Observações importantes
+A execução pode ser **demorada** dependendo da quantidade de imagens e do hardware disponível, especialmente durante a geração dos heatmaps (EigenCAM).
 
-A execução pode ser demorada dependendo da quantidade de imagens e do hardware disponível.
+### Execução em Servidores (Headless)
 
-Para execução em servidores sem interface gráfica, recomenda-se comentar as linhas finais responsáveis por abrir o FiftyOne App:
+Se estiver executando em um servidor **sem interface gráfica** (headless), **comente** as linhas finais no `main.py` que iniciam o FiftyOne App, para evitar erros:
 
+```python
 # session = fo.launch_app()
 # session.wait()
+```
 
-Caso ocorram erros relacionados a nomes de arquivos, verifique se os nomes das imagens correspondem aos IDs do COCO.
+### Erros de Anotação
 
-Possíveis extensões
+Caso ocorram erros relacionados a nomes de arquivos ou IDs de anotações, verifique se os nomes dos arquivos de imagem locais correspondem aos IDs esperados no COCO.
 
-Exportação dos resultados em CSV ou JSON
+-----
 
-Integração com pipelines de ML (ex.: MLflow)
+## ✒️ Autores
 
-Avaliação de modelos customizados
+  * Anne Mari Suenaga Sakai
+  * Felipe Jun Nishitani
+  * Lucas Pereira Goes
 
-Análise estatística entre contextos (original × neutro × atípico)
+**Contexto:** Avaliação e interpretabilidade de modelos de detecção de objetos.
 
-Autores: Anne Mari Suenaga Sakai, Felipe Jun Nishitani e Lucas Pereira Goes
-Contexto: Avaliação e interpretabilidade de modelos de detecção de objetos
+-----
+
